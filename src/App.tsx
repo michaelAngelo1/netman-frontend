@@ -3,7 +3,7 @@ import Home from "./Home";
 
 export default function App() {
 
-  const [room, setRoom] = useState('');
+  const [room, setRoom] = useState('HD03');
 
   return (
     <div className='text-slate-50 font-poppins'>
