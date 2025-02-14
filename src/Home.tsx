@@ -4,7 +4,6 @@ interface HomeProps {
   room: string
 }
 
-
 export default function Home({ ...homeProp } : HomeProps) {
   return (
     <div className="p-3 text-2xl">
