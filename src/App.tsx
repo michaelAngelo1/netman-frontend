@@ -2,30 +2,27 @@ import { useState } from 'react';
 import Home from './Home';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
+import ModalAction from './components/ModalAction';
 
 export default function App() {
   const [room, setRoom] = useState('HD03');
   const currentPath = window.location.pathname;
 
-  const [control, setControl] = useState(false);
-  const [install, setInstall] = useState(false); // New state for Install dropdown
-  const [chrome, setChrome] = useState(false); // New state for Chrome
-  const [explorer, setExplorer] = useState(false); // New state for Explorer
-  const [git, setGit] = useState(false); // New state for Git
-  const [vscode, setVscode] = useState(false); // New state for VSCode
-
-
   function handleLogOut() {
     console.log('logging out');
   }
 
+  const [openModal, setOpenModal] = useState(false);
+  const [action, setAction] = useState('');
   function handleAction(action: string) {
-    if (action === 'control') {
-      setControl(!control); // Toggle Control dropdown
-      setInstall(false); // Close Install if open
-    } else if (action === 'install') {
-      setInstall(!install); // Toggle Install dropdown
-      setControl(false); // Close Control if open
+    if(action == 'control') {
+      console.log('control');
+      setOpenModal(true);
+      setAction('control');
+    } else {
+      console.log('install');
+      setOpenModal(true);
+      setAction('install');
     }
   }
 
@@ -50,32 +47,6 @@ export default function App() {
                     </li>
                   </ul>
                 </details>
-                {control && (
-                  <details>
-                    <summary>Control</summary>
-                    <ul className='bg-base-100 rounded-t-none p-2'>
-                      <li onClick={() => setChrome(!chrome)}>
-                        <a>Start Chrome</a>
-                      </li>
-                      <li onClick={() => setExplorer(!explorer)}>
-                        <a>Start Explorer</a>
-                      </li>
-                    </ul>
-                  </details>
-                )}
-                {install && (
-                  <details>
-                    <summary>Install</summary>
-                    <ul className='bg-base-100 rounded-t-none p-2'>
-                      <li onClick={() => setGit(!git)}>
-                        <a>Install Git</a>
-                      </li>
-                      <li onClick={() => setVscode(!vscode)}>
-                        <a>Install VSCode</a>
-                      </li>
-                    </ul>
-                  </details>
-                )}
               </li>
               <li className={currentPath === '/auth' ? 'hidden' : ''}>
                 <details>
@@ -99,6 +70,7 @@ export default function App() {
             </ul>
           </div>
         </div>
+        <ModalAction open={openModal} action={action} setOpen={setOpenModal}/>
       </div>
       <Routes>
         <Route path='/' element={<Home room={room} />} />

@@ -263,7 +263,7 @@ export default function Room({ room } : RoomProps) {
       <div className="text-slate-50 text-2xl font-bold">Room {room}</div>
       {
         room === "HD03" ? (
-          <div className="flex flex-row space-x-4">
+          <div className="flex flex-row flex-wrap space-x-4">
             <div className="flex flex-col gap-3">
               <Computer {...allComputersHD3[0]}/>
               <Computer {...allComputersHD3[1]}/>
