@@ -32,7 +32,7 @@ export const RoomComputerProvider: React.FC<RoomComputerProviderProps> = ({ chil
         .get('')
         .then((data) => {
           console.log("data room: ", data.data);
-          setComputers(data.data.response);
+          setRooms(data.data.response);
         })
         .catch((e) => {
           console.log("error fetching room instance", e);
