@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useRoomComputer } from "./context/ComputerContext"
 import Room from "./Room"
 
 interface HomeProps {
@@ -5,6 +7,13 @@ interface HomeProps {
 }
 
 export default function Home({ ...homeProp } : HomeProps) {
+  const { computers } = useRoomComputer();
+
+  useEffect(() => {
+    console.log("computers: ", computers);
+  }, [computers])
+  
+
   return (
     <div className="p-3 text-2xl">
       <div className="flex flex-col gap-3">

@@ -258,6 +258,7 @@ const allComputersHD4 = [
 ]
 
 export default function Room({ room } : RoomProps) {
+
   return (
     <div className="p-3 flex flex-col gap-6 h-screen items-center">
       <div className="text-slate-50 text-2xl font-bold">Room {room}</div>
