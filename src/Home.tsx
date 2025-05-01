@@ -1,20 +1,16 @@
 import { useRoomComputer } from "./context/ComputerContext"
-import Room from "./Room"
+import RoomPage from "./Room"
 
-interface HomeProps {
-  room: string
-}
-
-export default function Home({ ...homeProp } : HomeProps) {
-  const { rooms } = useRoomComputer();
+export default function Home() {
+  const { rooms, roomChosen } = useRoomComputer();
 
   return (
     <div className="p-3 text-2xl">
       <div className="flex flex-col gap-3">
         {rooms
-          .filter((room) => room.name === "HD03" || room.name === "HD4")
+          .filter((room) => room.name === roomChosen)
           .map((room) => (
-            <Room key={room.name} room={homeProp.room} />
+            <RoomPage key={room.name} {...room} />
           ))}
       </div>
     </div>

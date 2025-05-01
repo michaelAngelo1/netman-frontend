@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
 import { Room, Computer } from "../Interface";
 import { roomInstance } from "../api/axiosConfig";
 
@@ -7,6 +7,10 @@ interface RoomComputerContextState {
   computers: Computer[];
   loading: boolean;
   error: string | null;
+  // room chosen by user
+  roomChosen: string;
+  setRoomChosen: Dispatch<SetStateAction<string>>;
+
   fetchRoomsAndComputers: () => Promise<void>;
 }
 
@@ -22,6 +26,8 @@ export const RoomComputerProvider: React.FC<RoomComputerProviderProps> = ({ chil
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
+  const [roomChosen, setRoomChosen] = useState('HD3');
+
   async function fetchRoomsAndComputers() {
     setLoading(true);
     setError(null);
@@ -53,6 +59,8 @@ export const RoomComputerProvider: React.FC<RoomComputerProviderProps> = ({ chil
     computers,
     loading,
     error,
+    roomChosen,
+    setRoomChosen,
     fetchRoomsAndComputers,
   };
 
