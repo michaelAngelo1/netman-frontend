@@ -1,61 +1,74 @@
 // import Computer from "./components/Computer";
-import { useEffect, useState } from "react";
-import ComputerComponent from "./components/Computer";
-import { useRoomComputer } from "./context/ComputerContext";
-import { Computer, Room } from "./Interface";
-import { io, Socket } from 'socket.io-client';
-const SOCKET_SERVER_URL = 'http://ecos.joheee.com:8010';
+import { useEffect, useState } from 'react';
+import ComputerComponent from './components/Computer';
+import { useRoomComputer } from './context/ComputerContext';
+import { Computer, Room } from './Interface';
+import { socket } from './socket';
 
-export default function RoomPage({ ...room } : Room) {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+export default function RoomPage({ ...room }: Room) {
+  const [socketConnected, setSocketConnected] = useState<boolean>();
+  const [response, setResponse] = useState<{
+    message: string;
+    body: unknown;
+  } | null>(null);
 
   useEffect(() => {
-    // Initialize socket connection
-    const newSocket = io(SOCKET_SERVER_URL);
-    console.log(newSocket ? "new socket: " + newSocket : "new socket doesnt exist");
-    setSocket(newSocket);
+    socket.on('connect', () => {
+      setSocketConnected(true);
+      console.log('Connected to socket');
+    });
 
-    // Clean up the socket connection when component unmounts
-    return () => {
-      newSocket.disconnect();
-    };
+    socket.on('disconnect', () => {
+      setSocketConnected(false);
+      console.log('Disconnected from socket');
+    });
+
+    socket.on(
+      'testingConnectionOutput',
+      (data: { message: string; body: unknown }) => {
+        console.log('Received:', data);
+        setResponse(data);
+      }
+    );
   }, []);
 
-  useEffect(() => {
-    if (!socket) return;
-    
-    console.log("socket: ", socket.connected.toString());
-    // Set up event listeners
-    socket.on('testConnection', (message: string) => {
-      setMessages(prevMessages => [...prevMessages, message]);
-    });
-    
-    // Clean up event listeners
-    return () => {
-      socket.off('message');
-    };
-  }, [socket]);
+  function sendData() {
+    if (socket && socketConnected) {
+      try {
+        console.log(socket + ' ' + socketConnected);
+        const jsonData = JSON.parse("{ \"test\": \"test\" }");
+        socket.emit('testingConnection', JSON.stringify(jsonData));
+      } catch (e) {
+        console.log(e);
 
-  const sendMessage = (message: string) => {
-    if (socket) {
-      socket.emit('message', message);
+        alert('failed send data');
+      }
     } else {
-      console.log("socket takde");
+      console.log('Socket not connected');
     }
-  };
-  
+  }
+
   const { roomChosen } = useRoomComputer();
   return (
-    <div className="p-3 flex flex-col gap-6 h-screen items-center">
-      <div className="text-slate-50 text-2xl font-bold">Room {roomChosen}</div>
-      <div className="grid grid-cols-5 grid-rows-5 gap-3">
-        {
+    <div className='p-3 flex flex-col gap-6 h-screen items-center'>
+      <div className='text-slate-50 text-2xl font-bold'>
+        Room {roomChosen} {socketConnected}
+      </div>
+      <div
+        onClick={() => sendData()}
+        className='btn btn-primary p-4'>
+        Send data
+      </div>
+      {response && <div>{response.message}</div>}
+      <div className='grid grid-cols-5 grid-rows-5 gap-3'>
+        {room ? (
           room.computers.map((computer: Computer) => (
             <ComputerComponent {...computer} />
           ))
-        }
+        ) : (
+          <div className='text-2xl text-white'>Loading...</div>
+        )}
       </div>
     </div>
-  )
+  );
 }

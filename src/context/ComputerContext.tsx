@@ -12,6 +12,9 @@ interface RoomComputerContextState {
   setRoomChosen: Dispatch<SetStateAction<string>>;
 
   fetchRoomsAndComputers: () => Promise<void>;
+
+  computersChosen: string[];
+  setComputersChosen: Dispatch<SetStateAction<string[]>>;
 }
 
 const RoomComputerContext = createContext<RoomComputerContextState | undefined>(undefined);
@@ -27,6 +30,7 @@ export const RoomComputerProvider: React.FC<RoomComputerProviderProps> = ({ chil
   const [error, setError] = useState<string | null>(null);
   
   const [roomChosen, setRoomChosen] = useState('HD3');
+  const [computersChosen, setComputersChosen] = useState<string[]>([]);
 
   async function fetchRoomsAndComputers() {
     setLoading(true);
@@ -39,6 +43,8 @@ export const RoomComputerProvider: React.FC<RoomComputerProviderProps> = ({ chil
         .then((data) => {
           console.log("data room: ", data.data);
           setRooms(data.data.response);
+
+          setComputers(data.data.response);
         })
         .catch((e) => {
           console.log("error fetching room instance", e);
@@ -62,6 +68,8 @@ export const RoomComputerProvider: React.FC<RoomComputerProviderProps> = ({ chil
     roomChosen,
     setRoomChosen,
     fetchRoomsAndComputers,
+    computersChosen,
+    setComputersChosen,
   };
 
   return (

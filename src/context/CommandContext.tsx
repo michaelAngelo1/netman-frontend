@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { commandInstance } from "../api/axiosConfig";
+import { socket } from "../socket";
 
 interface Command {
   id: string;
@@ -13,6 +14,11 @@ interface Command {
 interface CommandContextState {
   commands: Command[];
   fetchCommands: () => Promise<void>;
+  responseSocket: {
+    message: string;
+    body: unknown;
+  } | null;
+  sendData: (data:{ ips: string[], commandId: string }) => void;
 }
 
 const CommandContext = createContext<CommandContextState | undefined>(undefined);
@@ -43,6 +49,54 @@ export const CommandProvider: React.FC<CommandProviderProps> = ({ children }) =>
     }
   }
 
+  // Socket Submission & Connection
+  const [socketConnected, setSocketConnected] = useState<boolean>();
+  const [responseSocket, setResponse] = useState<{
+    message: string;
+    body: {
+      ip: string;
+      type: string;
+      executionTime: string;
+    };
+  } | null>(null);
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      setSocketConnected(true);
+      console.log('Connected to socket');
+    });
+
+    socket.on('disconnect', () => {
+      setSocketConnected(false);
+      console.log('Disconnected from socket');
+    });
+
+    socket.on(
+      'testingConnectionOutput',
+      (data: { message: string; body: {
+      ip: string;
+      type: string;
+      executionTime: string;
+    } }) => {
+        console.log('Received:', data);
+        setResponse(data);
+      }
+    );
+  }, []);
+
+  function sendData(actionData: { ips: string[]; commandId: string | undefined; }) {
+    if (socket && socketConnected) {
+      try {
+        console.log(socket + ' ' + socketConnected);
+        socket.emit('testingConnection', JSON.stringify(actionData));
+      } catch (e) {
+        console.log("failed send action data: " + e);
+      }
+    } else {
+      console.log('Socket not connected');
+    }
+  }
+
   useEffect(() => {
     fetchCommands();
   }, [])
@@ -50,6 +104,8 @@ export const CommandProvider: React.FC<CommandProviderProps> = ({ children }) =>
   const contextValue: CommandContextState = {
     commands,
     fetchCommands,
+    responseSocket,
+    sendData
   }
 
   return (

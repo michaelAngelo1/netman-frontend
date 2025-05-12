@@ -7,11 +7,16 @@ export default function Home() {
   return (
     <div className="p-3 text-2xl">
       <div className="flex flex-col gap-3">
-        {rooms
-          .filter((room) => room.name === roomChosen)
-          .map((room) => (
-            <RoomPage key={room.name} {...room} />
-          ))}
+        {
+          rooms ?
+            rooms
+              .filter((room) => room.name === roomChosen)
+              .map((room) => (
+                <RoomPage key={room.name} {...room} />
+              ))
+          :
+            <div className="text-2xl text-white">Loading...</div>
+        }
       </div>
     </div>
   );
