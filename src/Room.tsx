@@ -14,8 +14,8 @@ export default function RoomPage({ ...room }: Room) {
       </div>
       <div className='grid grid-cols-5 grid-rows-5 gap-3'>
         {room ? (
-          room.computers.map((computer: Computer) => (
-            <ComputerComponent {...computer} />
+          room.computers.map((computer: Computer, i) => (
+            <ComputerComponent key={i} {...computer} />
           ))
         ) : (
           <div className='text-2xl text-white'>Loading...</div>

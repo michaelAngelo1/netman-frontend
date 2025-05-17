@@ -16,11 +16,9 @@ export default function App() {
   const [action, setAction] = useState('');
   function handleAction(action: string) {
     if(action == 'CONTROL') {
-      console.log('control');
       setOpenModal(true);
       setAction('CONTROL');
     } else {
-      console.log('SOFTWARE');
       setOpenModal(true);
       setAction('SOFTWARE');
     }
@@ -42,7 +40,7 @@ export default function App() {
                 <li>
                   <details>
                     <summary>Action</summary>
-                    <ul className='bg-base-100 rounded-t-none p-2 z-40'>
+                    <ul className='bg-base-100 text-slate-800 rounded-t-none p-2 z-40'>
                       <li onClick={() => handleAction('CONTROL')}>
                         <a>Control</a>
                       </li>
@@ -55,10 +53,10 @@ export default function App() {
                 <li className={currentPath === '/auth' ? 'hidden' : ''}>
                   <details>
                     <summary>Rooms</summary>
-                    <ul className='bg-base-100 rounded-t-none p-2 z-40'>
+                    <ul className='bg-base-100 text-slate-800 rounded-t-none p-2 z-40'>
                       {
-                        rooms.map((room) => (
-                          <li onClick={() => setRoomChosen(room.name)}>
+                        rooms.map((room, i) => (
+                          <li key={i} onClick={() => setRoomChosen(room.name)}>
                             <a>{room.name}</a>
                           </li>
                         ))

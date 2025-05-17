@@ -7,7 +7,6 @@ export default function ComputerComponent({ ...computer } : Computer) {
   const { setComputersChosen } = useRoomComputer();
 
   function handleAction({ ...computerProp }, checked: boolean) {
-    console.log('PC on IP: ', computerProp.ip, ' is ', checked.toString());
     if (checked) {
         setComputersChosen(prevComputersChosen => [...prevComputersChosen, computerProp.ip]);
     } else {
