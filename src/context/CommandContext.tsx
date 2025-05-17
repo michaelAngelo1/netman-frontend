@@ -72,7 +72,7 @@ export const CommandProvider: React.FC<CommandProviderProps> = ({ children }) =>
     });
 
     socket.on(
-      'testingConnectionOutput',
+      'executeCommandOutput',
       (data: { message: string; body: {
       ip: string;
       type: string;
@@ -88,7 +88,7 @@ export const CommandProvider: React.FC<CommandProviderProps> = ({ children }) =>
     if (socket && socketConnected) {
       try {
         console.log(socket + ' ' + socketConnected);
-        socket.emit('testingConnection', JSON.stringify(actionData));
+        socket.emit('executeCommand', JSON.stringify(actionData));
       } catch (e) {
         console.log("failed send action data: " + e);
       }
