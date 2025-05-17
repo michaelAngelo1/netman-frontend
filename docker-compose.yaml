@@ -1,48 +1,12 @@
-# docker-compose.yml
-
-version: '3.8' # Specifies the Docker Compose file format version
+version: '3.8' 
 
 services:
-  # Service name for your React application
-  frontend:
-    # Tells Docker Compose to build the image from the Dockerfile in the current directory (.)
+  netman_frontend_image:
     build:
       context: .
       dockerfile: Dockerfile
-    # Container name (optional, but good for clarity)
-    container_name: my_react_vite_app
-    # Port mapping: <host_port>:<container_port>
-    # This maps port 3000 on your host machine to port 80 in the container (where Nginx is running)
+    container_name: netman_frontend
+    image: johedotcom/netman-frontend-repository:latest
     ports:
       - "3000:80"
-    # Restart policy:
-    # 'unless-stopped' ensures the container restarts automatically unless manually stopped.
-    # Other options: 'no', 'on-failure', 'always'
-    restart: unless-stopped
-    # Environment variables (optional)
-    # You can define environment variables that will be available inside the container
-    # environment:
-    #   - NODE_ENV=production
-    #   - API_BASE_URL=http://api.example.com
-
-    # Volumes (optional, more useful for development with hot-reloading)
-    # For a production build, you typically don't need to mount the source code
-    # as it's already copied into the image during the build process.
-    # If you wanted to use this for development with hot-reloading (requires changes to Dockerfile and Vite config):
-    # volumes:
-    #   - .:/app # Mounts the current directory to /app in the container
-    #   - /app/node_modules # Anonymous volume to prevent host node_modules from overwriting container's
-    # command: npm run dev # Override the CMD from Dockerfile for development
-
-networks:
-  # Defines a default network for the services (optional, Docker Compose creates one by default)
-  default:
-    driver: bridge
-
-# You can add other services here, like a backend API, database, etc.
-# example_backend:
-#   image: node:18-alpine
-#   container_name: my_backend_api
-#   ports:
-#     - "8080:8080"
-#   # ... other configurations
+    restart: always
