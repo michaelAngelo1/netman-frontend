@@ -8,5 +8,5 @@ services:
     container_name: netman_frontend
     image: johedotcom/netman-frontend-repository:latest
     ports:
-      - "3000:80"
+      - "4030:80"
     restart: always
