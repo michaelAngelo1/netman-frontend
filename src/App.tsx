@@ -30,55 +30,58 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className='text-slate-50 font-poppins'>
-        <div className='navbar bg-base-100'>
-          <div className='flex-1'>
-            <a className='btn btn-ghost text-2xl'>Netman Frontend</a>
+      <div className='bg-slate-800'>
+
+        <div className='text-slate-50 font-poppins'>
+          <div className='navbar bg-slate-800'>
+            <div className='flex-1'>
+              <a className='btn btn-ghost text-2xl'>Netman Frontend</a>
+            </div>
+            <div className='flex-none'>
+              <ul className='menu menu-horizontal px-1 text-2xl'>
+                <li>
+                  <details>
+                    <summary>Action</summary>
+                    <ul className='bg-base-100 rounded-t-none p-2 z-40'>
+                      <li onClick={() => handleAction('CONTROL')}>
+                        <a>Control</a>
+                      </li>
+                      <li onClick={() => handleAction('SOFTWARE')}>
+                        <a>Install</a>
+                      </li>
+                    </ul>
+                  </details>
+                </li>
+                <li className={currentPath === '/auth' ? 'hidden' : ''}>
+                  <details>
+                    <summary>Rooms</summary>
+                    <ul className='bg-base-100 rounded-t-none p-2 z-40'>
+                      {
+                        rooms.map((room) => (
+                          <li onClick={() => setRoomChosen(room.name)}>
+                            <a>{room.name}</a>
+                          </li>
+                        ))
+                      }
+                    </ul>
+                  </details>
+                </li>
+                <li
+                  onClick={() => handleLogOut()}
+                  className={currentPath === '/auth' ? 'hidden' : ''}
+                >
+                  <a>Log out</a>
+                </li>
+              </ul>
+            </div>
           </div>
-          <div className='flex-none'>
-            <ul className='menu menu-horizontal px-1 text-2xl'>
-              <li>
-                <details>
-                  <summary>Action</summary>
-                  <ul className='bg-base-100 rounded-t-none p-2 z-40'>
-                    <li onClick={() => handleAction('CONTROL')}>
-                      <a>Control</a>
-                    </li>
-                    <li onClick={() => handleAction('SOFTWARE')}>
-                      <a>Install</a>
-                    </li>
-                  </ul>
-                </details>
-              </li>
-              <li className={currentPath === '/auth' ? 'hidden' : ''}>
-                <details>
-                  <summary>Rooms</summary>
-                  <ul className='bg-base-100 rounded-t-none p-2 z-40'>
-                    {
-                      rooms.map((room) => (
-                        <li onClick={() => setRoomChosen(room.name)}>
-                          <a>{room.name}</a>
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </details>
-              </li>
-              <li
-                onClick={() => handleLogOut()}
-                className={currentPath === '/auth' ? 'hidden' : ''}
-              >
-                <a>Log out</a>
-              </li>
-            </ul>
-          </div>
+          <ModalAction open={openModal} action={action} setOpen={setOpenModal}/>
         </div>
-        <ModalAction open={openModal} action={action} setOpen={setOpenModal}/>
+        <Routes>
+          <Route path='/' element={<Home/>} />
+          <Route path='/auth' element={<AuthPage />} />
+        </Routes>
       </div>
-      <Routes>
-        <Route path='/' element={<Home/>} />
-        <Route path='/auth' element={<AuthPage />} />
-      </Routes>
     </BrowserRouter>
   );
 }
