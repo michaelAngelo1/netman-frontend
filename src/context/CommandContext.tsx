@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { commandInstance } from "../api/axiosConfig";
+import { commandInstance, backendApiUrl } from "../api/axiosConfig";
 import { io, Socket } from "socket.io-client";
 
 interface Command {
@@ -102,7 +102,7 @@ export const CommandProvider: React.FC<CommandProviderProps> = ({
   const [socketConnected, setSocketConnected] = useState<boolean>();
 
   useEffect(() => {
-    const newSocket = io("http://localhost:3000");
+    const newSocket = io(backendApiUrl);
 
     newSocket.on("connect", () => {
       setSocketConnected(true);
