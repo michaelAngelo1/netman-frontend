@@ -40,22 +40,31 @@ export default function ModalAction({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white p-6 w-1/3 max-h-[80vh] overflow-y-auto rounded-lg text-black">
         <div className="flex flex-col gap-3">
-          {commands
-            .filter((c) => c.type === action)
-            .map((c, i) => (
-              <div
-                key={i}
-                onClick={() => setCommandId(c.id)}
-                className={`text-lg font-medium p-3 border-2 border-primary rounded-xl cursor-pointer transition-colors
-                  ${
-                    commandId === c.id
-                      ? "bg-primary text-slate-50"
-                      : "hover:bg-primary/10"
-                  }`}
-              >
-                {c.name}
+          {
+            action == "ADDROOM" ?
+              <div className="flex flex-col gap-3">
+                <div className="text-xl font-medium">Add Room</div>
+                <input type="text" placeholder="Room name" className="input bg-slate-100 text-md w-full"/>
+                <input type="number" placeholder="Room capacity" className="input bg-slate-100 text-md w-full"/>
               </div>
-            ))}
+            :
+              commands
+                .filter((c) => c.type === action)
+                .map((c, i) => (
+                  <div
+                    key={i}
+                    onClick={() => setCommandId(c.id)}
+                    className={`text-lg font-medium p-3 border-2 border-primary rounded-xl cursor-pointer transition-colors
+                      ${
+                        commandId === c.id
+                          ? "bg-primary text-slate-50"
+                          : "hover:bg-primary/10"
+                      }`}
+                  >
+                    {c.name}
+                  </div>
+                ))
+          }
         </div>
         <div className="grid grid-cols-[2fr_1fr] gap-3 mt-4">
           <div

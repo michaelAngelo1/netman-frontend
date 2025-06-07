@@ -18,9 +18,12 @@ export default function App() {
     if(action == 'CONTROL') {
       setOpenModal(true);
       setAction('CONTROL');
-    } else {
+    } else if(action == 'SOFTWARE') {
       setOpenModal(true);
       setAction('SOFTWARE');
+    } else if(action == 'ADDROOM') {
+      setOpenModal(true);
+      setAction('ADDROOM');
     }
   }
 
@@ -37,6 +40,9 @@ export default function App() {
             </div>
             <div className='flex-none'>
               <ul className='menu menu-horizontal px-1 text-2xl'>
+                <li>
+                  <div onClick={() => handleAction('ADDROOM')}>Add Room</div>
+                </li>
                 <li>
                   <details>
                     <summary>Action</summary>
