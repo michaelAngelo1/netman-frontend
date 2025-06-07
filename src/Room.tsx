@@ -1,10 +1,28 @@
 // import Computer from "./components/Computer";
+import { wolInstance } from './api/axiosConfig';
 import ComputerComponent from './components/Computer';
 import { useRoomComputer } from './context/ComputerContext';
 import { Computer, Room } from './Interface';
 
 export default function RoomPage({ ...room }: Room) {
 
+  function doWol() {
+    console.log("WOL request initiated");
+    wolInstance.post("", {
+      "mac": [
+        "A8-B1-3B-74-13-A6",
+        "A8-B1-3B-74-12-16",
+        "A8-B1-3B-74-82-CE",
+        "A8-B1-3B-74-82-59",
+        "A8-B1-3B-74-12-15"
+      ]
+    }).then((data) => {
+      console.log("successful WOL response: ", data.data.message);
+    })
+    .catch((e) => {
+      console.log("error WOL", e);
+    });
+  }
 
   const { roomChosen } = useRoomComputer();
   return (
@@ -12,6 +30,7 @@ export default function RoomPage({ ...room }: Room) {
       <div className='text-slate-50 text-2xl font-bold'>
         Room {roomChosen}
       </div>
+      <div onClick={() => doWol()} className='btn btn-primary'>Turn on all PCs</div>
       <div className='grid grid-cols-5 grid-rows-5 gap-3'>
         {room ? (
           room.computers.map((computer: Computer, i) => (

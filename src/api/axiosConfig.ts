@@ -27,3 +27,11 @@ export const commandByIdInstance = (id: string) =>
       "Content-Type": "application/json",
     },
   });
+
+export const wolInstance = axios.create({
+  baseURL: `${backendApiUrl}/wol`,
+  headers: {
+    accept: "*/*",
+    "Content-Type": "application/json",
+  },
+});

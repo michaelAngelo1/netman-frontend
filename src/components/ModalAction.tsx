@@ -38,7 +38,7 @@ export default function ModalAction({
   }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white p-6 w-2/3 max-h-[80vh] overflow-y-auto rounded-lg text-black">
+      <div className="bg-white p-6 w-1/3 max-h-[80vh] overflow-y-auto rounded-lg text-black">
         <div className="flex flex-col gap-3">
           {commands
             .filter((c) => c.type === action)
