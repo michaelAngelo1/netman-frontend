@@ -24,6 +24,9 @@ export default function App() {
     } else if(action == 'ADDROOM') {
       setOpenModal(true);
       setAction('ADDROOM');
+    } else if(action == "ADDCOMPUTER") {
+      setOpenModal(true);
+      setAction('ADDCOMPUTER');
     }
   }
 
@@ -41,12 +44,15 @@ export default function App() {
             <div className='flex-none'>
               <ul className='menu menu-horizontal px-1 text-2xl'>
                 <li>
+                  <div onClick={() => handleAction('ADDCOMPUTER')}>Add PC</div>
+                </li>
+                <li>
                   <div onClick={() => handleAction('ADDROOM')}>Add Room</div>
                 </li>
                 <li>
                   <details>
                     <summary>Action</summary>
-                    <ul className='bg-base-100 text-slate-800 rounded-t-none p-2 z-40'>
+                    <ul className='bg-base-100 text-slate-100 rounded-t-none p-2 z-40'>
                       <li onClick={() => handleAction('CONTROL')}>
                         <a>Control</a>
                       </li>
@@ -59,7 +65,7 @@ export default function App() {
                 <li className={currentPath === '/auth' ? 'hidden' : ''}>
                   <details>
                     <summary>Rooms</summary>
-                    <ul className='bg-base-100 text-slate-800 rounded-t-none p-2 z-40'>
+                    <ul className='bg-base-100 text-slate-100 rounded-t-none p-2 z-40'>
                       {
                         rooms.map((room, i) => (
                           <li key={i} onClick={() => setRoomChosen(room.name)}>

@@ -14,27 +14,55 @@ export default function ModalAction({
   action,
   setOpen,
 }: ModalActionProps) {
-  const { computersChosen } = useRoomComputer();
+  const { rooms, assignComputer, computersChosen, createRoom, loading, setLoading, fetchRoomsAndComputers } = useRoomComputer();
 
   const [commandId, setCommandId] = useState<string>("");
 
-  const { commands, responsesHistory, error, startMessage, sendData } =
-    useCommands();
+  const { commands, responsesHistory, error, startMessage, sendData } = useCommands();
+
+
+  const [roomName, setRoomName] = useState("");
+  const [roomCapacity, setRoomCapacity] = useState(0);
+  
+  const [hostname, setHostname] = useState("");
+  const [number, setNumber] = useState(0);
+  const [ip, setIp] = useState("");
+  const [mac, setMac] = useState("");
+  const [roomId, setRoomId] = useState("");
 
   function doMagic() {
-    try {
-      const actionData = {
-        ips: computersChosen,
-        commandId: commandId,
-      };
-      sendData(actionData);
-    } catch (e) {
-      console.log("failed send action data: ", e);
+    if(action === "ADDROOM") {
+      console.log("Add Room action triggered");
+      createRoom(roomName, roomCapacity);
+      setLoading(true);
+      fetchRoomsAndComputers();
+      setOpen(false);
+    }
+    else if(action === "ADDCOMPUTER") {
+      console.log("ADD COMPUTER START");
+      assignComputer(hostname, number, ip, mac, roomId);
+      setLoading(true);
+      fetchRoomsAndComputers();
+      setOpen(false);
+    } 
+    else {
+      try {
+        const actionData = {
+          ips: computersChosen,
+          commandId: commandId,
+        };
+        sendData(actionData);
+      } catch (e) {
+        console.log("failed send action data: ", e);
+      }
     }
   }
 
   if (!open) {
     return null;
+  } 
+  if(loading) {
+    return <div>Loading...</div>
   }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -44,8 +72,24 @@ export default function ModalAction({
             action == "ADDROOM" ?
               <div className="flex flex-col gap-3">
                 <div className="text-xl font-medium">Add Room</div>
-                <input type="text" placeholder="Room name" className="input bg-slate-100 text-md w-full"/>
-                <input type="number" placeholder="Room capacity" className="input bg-slate-100 text-md w-full"/>
+                <input type="text" placeholder="Room name" onChange={(e) => setRoomName(e.target.value)} className="input bg-slate-100 text-md w-full"/>
+                <input type="number" placeholder="Room capacity" onChange={(e) => setRoomCapacity(Number(e.target.value))}  className="input bg-slate-100 text-md w-full"/>
+              </div>
+            : action == "ADDCOMPUTER" ?
+              <div className="flex flex-col gap-3">
+                <div className="text-xl font-medium">Add PC to Room</div>
+                <input type="text" placeholder="Set Hostname" onChange={(e) => setHostname(e.target.value)} className="input bg-slate-100 text-md w-full"/>
+                <input type="text" placeholder="Set IP" onChange={(e) => setIp(e.target.value)} className="input bg-slate-100 text-md w-full"/>
+                <input type="text" placeholder="Set MAC Address" onChange={(e) => setMac(e.target.value)} className="input bg-slate-100 text-md w-full"/>
+                <input type="number" placeholder="Set PC Number:  " onChange={(e) => setNumber(Number(e.target.value))}  className="input bg-slate-100 text-md w-full"/>
+                <select onChange={(e) => setRoomId(e.target.value)} defaultValue="Set Room" className="select w-full bg-slate-100 text-blue-600">
+                  <option disabled={true}>Set Room</option>
+                  {
+                    rooms.map(room => (
+                      <option value={room.id}>{room.name}</option>
+                    ))
+                  }
+                </select>
               </div>
             :
               commands
@@ -80,121 +124,127 @@ export default function ModalAction({
             Close
           </div>
         </div>
-        <div className="mt-4">
-          {/* Start Message */}
-          {startMessage && (
-            <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-lg">
-              <p>{startMessage.message}</p>
-              <p className="text-xs mt-1">
-                Started at: {new Date(startMessage.timestamp).toLocaleString()}
-              </p>
-            </div>
-          )}
 
-          {/* Error Message */}
-          {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
-              <p className="font-semibold">Error:</p>
-              <p>{error.message}</p>
-              <p className="text-xs mt-1">Duration: {error.executionTime}</p>
-            </div>
-          )}
+        {/* ADD CONDITIONAL ACTION IF NOT ADDROOM */}
 
-          {/* Command Outputs Per IP */}
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries(responsesHistory).map(([ip, responses]) => (
-              <div key={ip} className="p-4 bg-gray-100 rounded-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-lg">IP: {ip}</h3>
-                  {responses.length > 0 && (
-                    <span className="text-xs text-gray-500">
-                      Latest: {responses[responses.length - 1].executionTime}
-                    </span>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  {responses.map((response, idx) => (
-                    <div
-                      key={idx}
-                      className={`p-3 rounded text-sm ${
-                        response.type === "stderr"
-                          ? "bg-red-50"
-                          : response.type === "stdout"
-                          ? "bg-green-50"
-                          : "bg-blue-50"
-                      }`}
-                    >
-                      {/* Output for stdout/stderr */}
-                      {(response.type === "stdout" ||
-                        response.type === "stderr") && (
-                        <div>
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="font-medium capitalize">
-                              {response.type}
-                            </span>
-                            <span className="text-xs">
-                              {response.executionTime}
-                            </span>
-                          </div>
-                          <p className="font-mono text-xs whitespace-pre-wrap">
-                            {response.message}
-                          </p>
-                        </div>
-                      )}
-
-                      {/* Output for close event */}
-                      {response.type === "close" && (
-                        <div>
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="font-medium">Completed</span>
-                            <span className="text-xs">
-                              {response.executionTime}
-                            </span>
-                          </div>
-                          <p className="mb-1">
-                            <span className="font-medium">Status: </span>
-                            <span
-                              className={
-                                response.statusCode === 0
-                                  ? "text-green-600"
-                                  : "text-red-600"
-                              }
-                            >
-                              {response.statusCode}
-                            </span>
-                          </p>
-                          <div className="text-xs space-y-1 mt-2 pt-2 border-t border-gray-200">
-                            <p>ID: {response.logCommandComputer.id}</p>
-                            <p>
-                              Execution Time:{" "}
-                              {response.logCommandComputer.executionTime}s
-                            </p>
-                            <p>
-                              Completed:{" "}
-                              {new Date(
-                                response.logCommandComputer.createdAt
-                              ).toLocaleString()}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Waiting State */}
-          {Object.keys(responsesHistory).length === 0 &&
-            !error &&
-            !startMessage && (
-              <div className="text-gray-500 text-center">
-                Waiting for response...
+        {
+          action !== "ADDROOM" && action !== "ADDCOMPUTER" && 
+          <div className="mt-4">
+            {/* Start Message */}
+            {startMessage && (
+              <div className="mb-4 p-3 bg-blue-50 text-blue-700 rounded-lg">
+                <p>{startMessage.message}</p>
+                <p className="text-xs mt-1">
+                  Started at: {new Date(startMessage.timestamp).toLocaleString()}
+                </p>
               </div>
             )}
-        </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg">
+                <p className="font-semibold">Error:</p>
+                <p>{error.message}</p>
+                <p className="text-xs mt-1">Duration: {error.executionTime}</p>
+              </div>
+            )}
+
+            {/* Command Outputs Per IP */}
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries(responsesHistory).map(([ip, responses]) => (
+                <div key={ip} className="p-4 bg-gray-100 rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold text-lg">IP: {ip}</h3>
+                    {responses.length > 0 && (
+                      <span className="text-xs text-gray-500">
+                        Latest: {responses[responses.length - 1].executionTime}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    {responses.map((response, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-3 rounded text-sm ${
+                          response.type === "stderr"
+                            ? "bg-red-50"
+                            : response.type === "stdout"
+                            ? "bg-green-50"
+                            : "bg-blue-50"
+                        }`}
+                      >
+                        {/* Output for stdout/stderr */}
+                        {(response.type === "stdout" ||
+                          response.type === "stderr") && (
+                          <div>
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="font-medium capitalize">
+                                {response.type}
+                              </span>
+                              <span className="text-xs">
+                                {response.executionTime}
+                              </span>
+                            </div>
+                            <p className="font-mono text-xs whitespace-pre-wrap">
+                              {response.message}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Output for close event */}
+                        {response.type === "close" && (
+                          <div>
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="font-medium">Completed</span>
+                              <span className="text-xs">
+                                {response.executionTime}
+                              </span>
+                            </div>
+                            <p className="mb-1">
+                              <span className="font-medium">Status: </span>
+                              <span
+                                className={
+                                  response.statusCode === 0
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }
+                              >
+                                {response.statusCode}
+                              </span>
+                            </p>
+                            <div className="text-xs space-y-1 mt-2 pt-2 border-t border-gray-200">
+                              <p>ID: {response.logCommandComputer.id}</p>
+                              <p>
+                                Execution Time:{" "}
+                                {response.logCommandComputer.executionTime}s
+                              </p>
+                              <p>
+                                Completed:{" "}
+                                {new Date(
+                                  response.logCommandComputer.createdAt
+                                ).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Waiting State */}
+            {Object.keys(responsesHistory).length === 0 &&
+              !error &&
+              !startMessage && (
+                <div className="text-gray-500 text-center">
+                  Waiting for response...
+                </div>
+              )}
+          </div>
+        }
       </div>
     </div>
   );

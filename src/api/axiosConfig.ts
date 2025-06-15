@@ -11,6 +11,14 @@ export const roomInstance = axios.create({
   },
 });
 
+export const computerInstance = axios.create({
+  baseURL: `${backendApiUrl}/computer`,
+  headers: {
+    accept: "*/*",
+    "Content-Type": "application/json",
+  },
+});
+
 export const commandInstance = axios.create({
   baseURL: `${backendApiUrl}/command`,
   headers: {
