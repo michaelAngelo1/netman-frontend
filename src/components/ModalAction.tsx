@@ -18,7 +18,7 @@ export default function ModalAction({
 
   const [commandId, setCommandId] = useState<string>("");
 
-  const { commands, responsesHistory, error, startMessage, sendData } = useCommands();
+  const { createCommand, commands, responsesHistory, error, startMessage, sendData, fetchCommands } = useCommands();
 
 
   const [roomName, setRoomName] = useState("");
@@ -29,6 +29,10 @@ export default function ModalAction({
   const [ip, setIp] = useState("");
   const [mac, setMac] = useState("");
   const [roomId, setRoomId] = useState("");
+
+  const [commandName, setCommandName] = useState("");
+  const [commandValue, setCommandValue] = useState("");
+  const [commandType, setCommandType] = useState("Control");
 
   function doMagic() {
     if(action === "ADDROOM") {
@@ -45,6 +49,13 @@ export default function ModalAction({
       fetchRoomsAndComputers();
       setOpen(false);
     } 
+    else if(action == "ADDCOMMAND") {
+      console.log("ADD COMMAND START");
+      createCommand(commandName, commandValue, commandType.toUpperCase());
+      setLoading(true);
+      fetchCommands();    
+      setOpen(false);
+    }
     else {
       try {
         const actionData = {
@@ -61,9 +72,6 @@ export default function ModalAction({
   if (!open) {
     return null;
   } 
-  if(loading) {
-    return <div>Loading...</div>
-  }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-white p-6 w-1/3 max-h-[80vh] overflow-y-auto rounded-lg text-black">
@@ -89,6 +97,17 @@ export default function ModalAction({
                       <option value={room.id}>{room.name}</option>
                     ))
                   }
+                </select>
+              </div>
+            : action == "ADDCOMMAND" ?
+              <div className="flex flex-col gap-3">
+                <div className="text-xl font-medium">Add Command</div>
+                <input type="text" placeholder="Enter command name" onChange={(e) => setCommandName(e.target.value)} className="input bg-slate-100 text-md w-full"/>
+                <input type="text" placeholder="Enter command value" onChange={(e) => setCommandValue(e.target.value)}  className="input bg-slate-100 text-md w-full"/>
+                <select onChange={(e) => setCommandType(e.target.value)} value={commandType} className="select w-full bg-slate-100 text-blue-600">
+                  <option disabled={true}>Set Command Type</option>
+                  <option value="Control">Control</option>
+                  <option value="Install">Install</option>
                 </select>
               </div>
             :
@@ -128,7 +147,7 @@ export default function ModalAction({
         {/* ADD CONDITIONAL ACTION IF NOT ADDROOM */}
 
         {
-          action !== "ADDROOM" && action !== "ADDCOMPUTER" && 
+          action !== "ADDROOM" && action !== "ADDCOMPUTER" && action !== "ADDCOMMAND" &&
           <div className="mt-4">
             {/* Start Message */}
             {startMessage && (
@@ -236,7 +255,7 @@ export default function ModalAction({
             </div>
 
             {/* Waiting State */}
-            {Object.keys(responsesHistory).length === 0 &&
+            {action !== "ADDROOM" && action !== "ADDCOMPUTER" && action !== "ADDCOMMAND" && Object.keys(responsesHistory).length === 0 &&
               !error &&
               !startMessage && (
                 <div className="text-gray-500 text-center">

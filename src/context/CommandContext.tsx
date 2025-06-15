@@ -64,6 +64,7 @@ interface IPResponses {
 interface CommandContextState {
   commands: Command[];
   fetchCommands: () => Promise<void>;
+  createCommand: (commandName: string, commandValue: string, commandType: string) => Promise<void>;
   responseSocket: SocketResponse | null; // Keep for backward compatibility
   responsesHistory: IPResponses;
   error: ErrorResponse | null;
@@ -94,6 +95,23 @@ export const CommandProvider: React.FC<CommandProviderProps> = ({
       setCommands(data.response);
     } catch (error) {
       console.error("Failed to fetch commands:", error);
+    }
+  }
+
+  async function createCommand(commandName: string, commandValue: string, commandType: string) {
+    try {
+      console.log("name: ", commandName, " type: ", commandType, " value: ", commandValue);
+      commandInstance.post('', {
+        name: commandName,
+        value: commandValue,
+        type: commandType,
+      }).then(data => {
+        console.log("response create command: ", data.data.response);
+      }).catch(e => {
+        console.log("error create command", e);
+      })
+    } catch (e) {
+      console.log("failed to create command: ", e);
     }
   }
 
@@ -164,6 +182,7 @@ export const CommandProvider: React.FC<CommandProviderProps> = ({
   const contextValue: CommandContextState = {
     commands,
     fetchCommands,
+    createCommand,
     responseSocket,
     responsesHistory,
     error,

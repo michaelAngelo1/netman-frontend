@@ -27,6 +27,9 @@ export default function App() {
     } else if(action == "ADDCOMPUTER") {
       setOpenModal(true);
       setAction('ADDCOMPUTER');
+    } else if(action == "ADDCOMMAND") {
+      setOpenModal(true);
+      setAction('ADDCOMMAND');
     }
   }
 
@@ -43,6 +46,9 @@ export default function App() {
             </div>
             <div className='flex-none'>
               <ul className='menu menu-horizontal px-1 text-2xl'>
+                <li>
+                  <div onClick={() => handleAction('ADDCOMMAND')}>Add Command</div>
+                </li>
                 <li>
                   <div onClick={() => handleAction('ADDCOMPUTER')}>Add PC</div>
                 </li>
