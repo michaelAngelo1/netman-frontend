@@ -1,8 +1,10 @@
 // import Computer from "./components/Computer";
+import { useNavigate } from 'react-router-dom';
 import { wolInstance } from './api/axiosConfig';
 import ComputerComponent from './components/Computer';
 import { useRoomComputer } from './context/ComputerContext';
 import { Computer, Room } from './Interface';
+import { useEffect } from 'react';
 
 export default function RoomPage({ ...room }: Room) {
 
@@ -23,6 +25,15 @@ export default function RoomPage({ ...room }: Room) {
       console.log("error WOL", e);
     });
   }
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const at = localStorage.getItem('at');
+    if(!at) {
+      navigate('/auth')
+    }
+  }, [])
 
   const { roomChosen } = useRoomComputer();
   return (

@@ -14,7 +14,7 @@ export default function ModalAction({
   action,
   setOpen,
 }: ModalActionProps) {
-  const { rooms, assignComputer, computersChosen, createRoom, loading, setLoading, fetchRoomsAndComputers } = useRoomComputer();
+  const { rooms, assignComputer, computersChosen, createRoom, setLoading, fetchRoomsAndComputers } = useRoomComputer();
 
   const [commandId, setCommandId] = useState<string>("");
 
@@ -32,7 +32,7 @@ export default function ModalAction({
 
   const [commandName, setCommandName] = useState("");
   const [commandValue, setCommandValue] = useState("");
-  const [commandType, setCommandType] = useState("Control");
+  const [commandType, setCommandType] = useState("");
 
   function doMagic() {
     if(action === "ADDROOM") {

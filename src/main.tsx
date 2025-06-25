@@ -4,13 +4,16 @@ import './index.css'
 import App from './App.tsx'
 import { RoomComputerProvider } from './context/ComputerContext.tsx'
 import { CommandProvider } from './context/CommandContext.tsx'
+import { BrowserRouter } from 'react-router-dom'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <CommandProvider>
-      <RoomComputerProvider>
-        <App />
-      </RoomComputerProvider>
-    </CommandProvider>
-  </StrictMode>,
+  <BrowserRouter>
+    <StrictMode>
+      <CommandProvider>
+        <RoomComputerProvider>
+          <App />
+        </RoomComputerProvider>
+      </CommandProvider>
+    </StrictMode>
+  </BrowserRouter>
 )
