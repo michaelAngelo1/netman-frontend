@@ -60,7 +60,7 @@ export default function App() {
               <li>
                 <details>
                   <summary>Action</summary>
-                  <ul className='bg-base-100 text-slate-100 rounded-t-none p-2 z-40'>
+                  <ul className='bg-slate-900 text-slate-100 rounded-t-none p-2 z-40'>
                     <li onClick={() => handleAction('CONTROL')}>
                       <a>Control</a>
                     </li>
@@ -73,7 +73,7 @@ export default function App() {
               <li className={currentPath === '/auth' ? 'hidden' : ''}>
                 <details>
                   <summary>Rooms</summary>
-                  <ul className='bg-base-100 text-slate-100 rounded-t-none p-2 z-40'>
+                  <ul className='bg-slate-900 text-slate-100 rounded-t-none p-2 z-40'>
                     {
                       rooms.map((room, i) => (
                         <li key={i} onClick={() => setRoomChosen(room.name)}>

@@ -16,7 +16,7 @@ export default function RoomPage({ ...room }: Room) {
         "A8-B1-3B-74-12-16",
         "A8-B1-3B-74-82-CE",
         "A8-B1-3B-74-82-59",
-        "A8-B1-3B-74-12-15"
+        "A8-B1-3B-74-13-B0"
       ]
     }).then((data) => {
       console.log("successful WOL response: ", data.data.message);
