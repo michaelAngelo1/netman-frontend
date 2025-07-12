@@ -134,7 +134,7 @@ export default function ModalAction({
             className="btn btn-primary p-4 rounded-xl text-xl cursor-pointer"
             onClick={doMagic}
           >
-            Do the magic!
+            Execute
           </div>
           <div
             className="btn btn-neutral p-4 rounded-xl text-xl cursor-pointer"
